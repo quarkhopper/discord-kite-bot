@@ -9,14 +9,14 @@ class CommandsHelp(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="commands")
+    @commands.command(name="kite")
     @BotErrors.require_role("Vetted")  # Restrict to users with "Vetted" role
     async def list_commands(self, ctx, command_name: str = None):
         """Displays a list of available commands, or detailed help for a specific command.
 
         Usage:
-        `!commands` → Lists all available commands in the bot.
-        `!commands <command_name>` → Provides detailed usage for a specific command.
+        `!kite` → Lists all available commands in the bot.
+        `!kite <command_name>` → Provides detailed usage for a specific command.
         """
 
         # Determine execution mode
@@ -71,6 +71,6 @@ class CommandsHelp(commands.Cog):
 async def setup(bot):
     await bot.add_cog(CommandsHelp(bot))
 
-    command = bot.get_command("commands")
+    command = bot.get_command("kite")
     if command:
         command.command_mode = "both"
