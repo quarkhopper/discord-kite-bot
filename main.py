@@ -32,17 +32,18 @@ async def load_cogs():
     commands_dir = pathlib.Path("commands")
     if commands_dir.exists():
         for command_file in commands_dir.glob("*.py"):
-            module_name = f"commands.{command_file.stem}"
-            try:
-                await bot.load_extension(module_name)
-                logger.info(f"Loaded {module_name}")
-            except Exception as e:
-                logger.error(f"Failed to load {module_name}: {e}")
+            if command_file.stem != "__init__":  # Avoid loading __init__.py
+                module_name = f"commands.{command_file.stem}"
+                try:
+                    await bot.load_extension(module_name)  # ✅ Proper async loading
+                    logger.info(f"Loaded {module_name}")
+                except Exception as e:
+                    logger.error(f"Failed to load {module_name}: {e}")
 
 # Start the bot
 async def run_bot():
     logger.info("Starting Discord bot...")
-    await load_cogs()
+    await load_cogs()  # ✅ Load cogs before starting
     await bot.start(os.getenv("DISCORD_BOT_TOKEN"))
 
 if __name__ == "__main__":
