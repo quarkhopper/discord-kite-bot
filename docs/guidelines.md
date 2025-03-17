@@ -14,7 +14,6 @@ discord-askme-bot/
 ├── Procfile
 ├── requirements.txt
 ├── commands/
-│   ├── chat.py
 │   ├── commands.py
 │   ├── user_chat.py
 ├── docs/
