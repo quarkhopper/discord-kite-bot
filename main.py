@@ -18,6 +18,14 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
+# Load `config_manager.py` explicitly since it's now in the root directory
+async def load_core_extensions():
+    try:
+        await bot.load_extension("config_manager")  # Load config manager separately
+        logger.info("✅ Loaded core extension: config_manager")
+    except Exception as e:
+        logger.error(f"❌ Failed to load config_manager: {e}")
+
 # Recursive function to load all commands (cogs) from the commands directory
 async def load_cogs():
     commands_dir = Path(__file__).parent / "commands"
@@ -40,6 +48,7 @@ async def on_ready():
 
 # Main entry point
 async def main():
+    await load_core_extensions()  # Load config_manager first
     await load_cogs()  # Load all cogs recursively
     await bot.start(os.getenv("DISCORD_BOT_TOKEN"))
 
