@@ -5,12 +5,12 @@ import os
 from discord.ext import commands
 from dotenv import load_dotenv
 import pathlib
-import logging  # Added logging to replace config.logger
+import logging  # Added logging
 
 # Load environment variables
 load_dotenv()
 
-# Initialize OpenAI client with the latest API format
+# Initialize OpenAI client
 openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Set up logging
@@ -25,7 +25,11 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 # Log when bot is ready
 @bot.event
 async def on_ready():
-    logger.info(f"Logged in as {bot.user}")
+    logger.info(f"✅ Logged in as {bot.user}")
+    
+    # Debug: List all registered commands
+    command_list = [cmd.name for cmd in bot.commands]
+    logger.info(f"🛠 Registered commands: {command_list}")
 
 # Load all Cogs from the 'commands' directory
 async def load_cogs():
@@ -35,14 +39,14 @@ async def load_cogs():
             if command_file.stem != "__init__":  # Avoid loading __init__.py
                 module_name = f"commands.{command_file.stem}"
                 try:
-                    await bot.load_extension(module_name)  # ✅ Proper async loading
-                    logger.info(f"Loaded {module_name}")
+                    await bot.load_extension(module_name)
+                    logger.info(f"✅ Loaded cog: {module_name}")
                 except Exception as e:
-                    logger.error(f"Failed to load {module_name}: {e}")
+                    logger.error(f"❌ Failed to load {module_name}: {e}")
 
 # Start the bot
 async def run_bot():
-    logger.info("Starting Discord bot...")
+    logger.info("🚀 Starting Discord bot...")
     await load_cogs()  # ✅ Load cogs before starting
     await bot.start(os.getenv("DISCORD_BOT_TOKEN"))
 
