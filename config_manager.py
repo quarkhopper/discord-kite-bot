@@ -112,10 +112,12 @@ def has_required_roles(sensitive=False):
 
         # Check for general access role
         if not any(role.name == general_role for role in ctx.author.roles):
+            await ctx.send(f"🚫 You need the `{general_role}` role to use this command.")
             return False
 
         # If the command requires the sensitive role, check for it
         if sensitive and not any(role.name == sensitive_role for role in ctx.author.roles):
+            await ctx.send(f"🚫 You need the `{sensitive_role}` role to use this command.")
             return False
 
         return True
