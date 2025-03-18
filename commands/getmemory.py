@@ -13,10 +13,18 @@ class GetMemory(commands.Cog):
     @commands.check(check_command_channel)  # Enforce channel restriction globally
     @has_required_roles(sensitive=True)  # Dynamically enforce "Vetted" + "Kite flyer"
     async def getmemory(self, ctx):
-        """Usage: !getmemory
+        """!getmemory
         
         Retrieves the current Kite memory file for download.
         If no memory file exists or it's empty, informs the user instead.
+        
+        Usage:
+        `!getmemory` → Retrieves the stored memory file.
+        
+        - **Server Mode Only**: Requires the "Vetted" and "Kite flyer" roles.
+        
+        Arguments:
+        - *(None)*: This command takes no arguments.
         """
 
         memory_path = kitestrings.export_memory()
@@ -25,7 +33,7 @@ class GetMemory(commands.Cog):
             await ctx.send("🚫 No memory file found.")
             return
         
-        await ctx.send(file=discord.File(memory_path, filename="kite_memory.txt"))
+        await ctx.send(file=discord.File(memory_path, filename="kite_memory.kmem"))
 
 async def setup(bot):
     await bot.add_cog(GetMemory(bot))

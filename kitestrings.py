@@ -5,7 +5,7 @@ import shutil
 DATA_DIR = pathlib.Path("data")
 DATA_DIR.mkdir(exist_ok=True)
 
-KITE_MEMORY_PATH = DATA_DIR / "kite_memory.txt"
+KITE_MEMORY_PATH = DATA_DIR / "kite_memory.kmem"
 KITE_MEMORY_BACKUP_PATH = DATA_DIR / "kite_memory.bak"
 
 def process_into_memory(file_bytes: bytes) -> str:

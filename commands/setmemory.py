@@ -13,17 +13,25 @@ class SetMemory(commands.Cog):
     @commands.check(check_command_channel)  # Enforce channel restriction globally
     @has_required_roles(sensitive=True)  # Dynamically enforce "Vetted" + "Kite flyer"
     async def setmemory(self, ctx):
-        """Usage: !setmemory (with file attached)
-
+        """!setmemory (with file attached)
+        
         Overwrites Kite's current memory with the content of the uploaded file.
         Skips confirmation if no memory file exists.
+        
+        Usage:
+        `!setmemory` (attach a file) → Uploads and sets Kite's memory.
+        
+        - **Server Mode Only**: Requires the "Vetted" and "Kite flyer" roles.
+        
+        Arguments:
+        - **File Attachment**: The new memory file to be used.
         """
 
         if not ctx.message.attachments:
-            await ctx.send("Usage: `!setmemory` (with file attached)")
+            await ctx.send("⚠️ Usage: `!setmemory` (with file attached)")
             return
 
-        memory_exists = os.path.exists("data/kite_memory.txt")  # Check if memory file exists
+        memory_exists = os.path.exists("data/kite_memory.kmem")  # Updated memory file name
 
         if memory_exists:
             await ctx.send(

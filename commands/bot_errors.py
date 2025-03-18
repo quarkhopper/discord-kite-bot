@@ -12,10 +12,15 @@ class BotErrors(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         """Handles command errors, ensuring minimal spam in chat."""
+        if isinstance(error, commands.CommandNotFound):
+            # Silently ignore unknown commands (just log them)
+            logger.warning(f"🚫 Unknown command attempted: {ctx.message.content}")
+            return  
+
         if isinstance(error, commands.CheckFailure):
             # Log only in server logs (no chat message)
             logger.warning(f"🚫 {ctx.command} failed: User {ctx.author} lacks permission or used in wrong channel.")
-            return  # Do nothing in chat
+            return  
 
         # Send real errors to the #kite channel if possible
         config = self.bot.get_cog("ConfigManager")

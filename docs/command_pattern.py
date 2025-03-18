@@ -1,4 +1,4 @@
-# commands/command-pattern.py
+# commands/command_pattern.py
 from discord.ext import commands
 import kitestrings
 from config_manager import check_command_channel, has_required_roles
@@ -11,15 +11,27 @@ class CommandPattern(commands.Cog):
     @commands.check(check_command_channel)  # Enforce channel restriction globally
     @has_required_roles()  # Dynamically enforce "Vetted" role
     # @has_required_roles(sensitive=True)  # Uncomment for sensitive commands
-    async def commandname(self, ctx):
-        """Usage: !commandname [arguments]
+    async def commandname(self, ctx, arg: str = None):
+        """!commandname <arg>
         
-        A brief, clear description of what this command does. This shows in !help.
+        A brief, clear description of what this command does.
+        
+        Usage:
+        `!commandname <arg>` → Example usage explanation.
+        
+        - **Server Mode Only**: Requires the "Vetted" role.
+        
+        Arguments:
+        - **arg**: Description of the argument.
         """
+
+        if not arg:
+            await ctx.send("⚠️ Usage: `!commandname <arg>`")
+            return
 
         try:
             # Command implementation goes here
-            await ctx.send("✅ Command executed successfully.")
+            await ctx.send(f"✅ Command executed with argument: {arg}")
         except Exception as e:
             await ctx.send(f"❌ Error executing command: {e}")
 
