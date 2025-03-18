@@ -16,12 +16,12 @@ class GetMemory(commands.Cog):
         """Usage: !getmemory
         
         Retrieves the current Kite memory file for download.
-        If no memory file exists, informs the user instead of sending NaN.
+        If no memory file exists or it's empty, informs the user instead.
         """
 
         memory_path = kitestrings.export_memory()
         
-        if not os.path.exists(memory_path):
+        if not os.path.exists(memory_path) or os.path.getsize(memory_path) == 0:
             await ctx.send("🚫 No memory file found.")
             return
         
