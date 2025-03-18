@@ -11,13 +11,13 @@ class BotErrors(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        """Handles common command errors to suppress unnecessary stack traces."""
+        """Handles command errors, ensuring minimal spam in chat."""
         if isinstance(error, commands.CheckFailure):
-            # Log a simple one-line error instead of full traceback
+            # Log only in server logs (no chat message)
             logger.warning(f"🚫 {ctx.command} failed: User {ctx.author} lacks permission or used in wrong channel.")
-            return  # Stop further error propagation
+            return  # Do nothing in chat
 
-        # Send error message to the correct channel if possible
+        # Send real errors to the #kite channel if possible
         config = self.bot.get_cog("ConfigManager")
         if config:
             kite_channel_name = config.get_channel_name()
@@ -27,7 +27,7 @@ class BotErrors(commands.Cog):
                     return
 
         # Fallback if #kite channel is not found
-        await ctx.send(f"❌ Error occurred: `{error}`")
+        logger.error(f"❌ Unhandled error in command {ctx.command}: {error}")
 
 # ✅ Properly register the Cog with the bot
 async def setup(bot):

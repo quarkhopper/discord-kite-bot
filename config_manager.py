@@ -2,6 +2,9 @@ import discord
 import json
 import re
 from discord.ext import commands
+import logging
+
+logger = logging.getLogger("discord")
 
 class ConfigManager(commands.Cog):
     def __init__(self, bot):
@@ -112,12 +115,12 @@ def has_required_roles(sensitive=False):
 
         # Check for general access role
         if not any(role.name == general_role for role in ctx.author.roles):
-            await ctx.send(f"🚫 You need the `{general_role}` role to use this command.")
+            logger.warning(f"🚫 {ctx.command} failed: User {ctx.author} lacks `{general_role}` role.")
             return False
 
         # If the command requires the sensitive role, check for it
         if sensitive and not any(role.name == sensitive_role for role in ctx.author.roles):
-            await ctx.send(f"🚫 You need the `{sensitive_role}` role to use this command.")
+            logger.warning(f"🚫 {ctx.command} failed: User {ctx.author} lacks `{sensitive_role}` role.")
             return False
 
         return True
