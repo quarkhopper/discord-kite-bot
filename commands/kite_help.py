@@ -69,14 +69,9 @@ class CommandsHelp(commands.Cog):
 
 
 async def setup(bot):
-    print("✅ Loading KiteHelp Cog...")
     await bot.add_cog(CommandsHelp(bot))
-    print("✅ KiteHelp Cog added successfully!")
 
     command = bot.get_command("kite")
     if command:
-        print("✅ !kite command is registered!")
         command.command_mode = "both"
-    else:
-        print("❌ !kite command is NOT registering!")
 
