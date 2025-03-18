@@ -8,11 +8,9 @@ class ConfigManager(commands.Cog):
         self.bot = bot
         self.config_channel_id = None  # Will be set dynamically
         self.command_config = {}  # In-memory config storage
-        self.kite_channel = "kite"  # Default value if not found in JSON
-
-        # Centralized role settings
-        self.GENERAL_REQUIRED_ROLE = "Vetted"
-        self.SENSITIVE_REQUIRED_ROLE = "Kite flyer"
+        self.kite_channel = "kite"  # Default if not found in JSON
+        self.general_role = "Vetted"  # Default
+        self.sensitive_role = "Kite flyer"  # Default
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -62,51 +60,32 @@ class ConfigManager(commands.Cog):
                 new_config = json.loads(content)  # Try parsing first
                 self.command_config = new_config  # Replace existing config
 
-                # Extract kite-channel from kite-config if available
+                # Extract kite settings from JSON
                 kite_config = new_config.get("kite-config", {})
                 self.kite_channel = kite_config.get("kite-channel", "kite")
+                self.general_role = kite_config.get("general-role", "Vetted")
+                self.sensitive_role = kite_config.get("sensitive-role", "Kite flyer")
+
                 print(f"[ConfigManager] Kite commands restricted to #{self.kite_channel}")
+                print(f"[ConfigManager] General role: {self.general_role}, Sensitive role: {self.sensitive_role}")
 
             except json.JSONDecodeError:
                 print("[ConfigManager] Invalid JSON detected. Skipping config update.")
 
     def get_channel_name(self):
         """Returns the authorized channel name for Kite commands."""
-        return self.kite_channel  # Dynamically set from config
+        return self.kite_channel
 
     def get_general_role(self):
         """Returns the required role for all commands."""
-        return self.GENERAL_REQUIRED_ROLE
+        return self.general_role
 
     def get_sensitive_role(self):
         """Returns the additional role required for sensitive commands."""
-        return self.SENSITIVE_REQUIRED_ROLE
-    
-    def has_required_roles(self, sensitive=False):
-        """Dynamically checks if the user has the required roles.
-        
-        If `sensitive=True`, it also checks for the sensitive role.
-        """
+        return self.sensitive_role
 
-        async def predicate(ctx):
-            config = ctx.bot.get_cog("ConfigManager")
-            if not config:
-                return False  # Fail-safe if ConfigManager is missing
-
-            general_role = config.get_general_role()
-            sensitive_role = config.get_sensitive_role()
-
-            # Check for general access role
-            if not any(role.name == general_role for role in ctx.author.roles):
-                return False
-
-            # If the command requires the sensitive role, check for it
-            if sensitive and not any(role.name == sensitive_role for role in ctx.author.roles):
-                return False
-
-            return True
-
-        return commands.check(predicate)
+async def setup(bot):
+    await bot.add_cog(ConfigManager(bot))
 
 def check_command_channel(ctx):
     """Ensures that the command is executed only in the authorized channel."""
@@ -117,5 +96,28 @@ def check_command_channel(ctx):
     authorized_channel = config.get_channel_name()
     return ctx.channel.name == authorized_channel
 
-async def setup(bot):
-    await bot.add_cog(ConfigManager(bot))
+def has_required_roles(sensitive=False):
+    """Dynamically checks if the user has the required roles.
+    
+    If `sensitive=True`, it also checks for the sensitive role.
+    """
+
+    async def predicate(ctx):
+        config = ctx.bot.get_cog("ConfigManager")
+        if not config:
+            return False  # Fail-safe if ConfigManager is missing
+
+        general_role = config.get_general_role()
+        sensitive_role = config.get_sensitive_role()
+
+        # Check for general access role
+        if not any(role.name == general_role for role in ctx.author.roles):
+            return False
+
+        # If the command requires the sensitive role, check for it
+        if sensitive and not any(role.name == sensitive_role for role in ctx.author.roles):
+            return False
+
+        return True
+
+    return commands.check(predicate)
