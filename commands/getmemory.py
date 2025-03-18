@@ -9,22 +9,27 @@ class GetMemory(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(
+        help="Retrieves the current Kite memory file for download.",
+        brief="Download Kite’s current memory file."
+    )
     @commands.check(check_command_channel)  # Enforce channel restriction globally
-    @has_required_roles(sensitive=True)  # Dynamically enforce "Vetted" + "Kite flyer"
+    @has_required_roles(sensitive=True)  # Requires "Vetted" + "Kite flyer"
     async def getmemory(self, ctx):
         """!getmemory
         
-        Retrieves the current Kite memory file for download.
-        If no memory file exists or it's empty, informs the user instead.
-        
-        Usage:
+        **Detailed Description:**  
+        This command allows you to **download Kite's current memory file**.
+
+        **Usage:**  
         `!getmemory` → Retrieves the stored memory file.
-        
-        - **Server Mode Only**: Requires the "Vetted" and "Kite flyer" roles.
-        
-        Arguments:
-        - *(None)*: This command takes no arguments.
+
+        **Requirements:**  
+        - **Server Mode Only**: This command only works in the **#kite** channel.  
+        - **Roles Required**: "Vetted" and "Kite flyer".  
+
+        **Arguments:**  
+        - *(None)*
         """
 
         memory_path = kitestrings.export_memory()
@@ -36,4 +41,5 @@ class GetMemory(commands.Cog):
         await ctx.send(file=discord.File(memory_path, filename="kite_memory.kmem"))
 
 async def setup(bot):
+    """Registers this command with the bot."""
     await bot.add_cog(GetMemory(bot))

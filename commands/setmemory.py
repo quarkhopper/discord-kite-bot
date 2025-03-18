@@ -9,22 +9,28 @@ class SetMemory(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command()
+    @commands.command(
+        help="Uploads a new memory file to Kite, replacing the existing memory.",
+        brief="Replace Kite’s memory with an uploaded file."
+    )
     @commands.check(check_command_channel)  # Enforce channel restriction globally
-    @has_required_roles(sensitive=True)  # Dynamically enforce "Vetted" + "Kite flyer"
+    @has_required_roles(sensitive=True)  # Requires "Vetted" + "Kite flyer"
     async def setmemory(self, ctx):
         """!setmemory (with file attached)
         
-        Overwrites Kite's current memory with the content of the uploaded file.
-        Skips confirmation if no memory file exists.
-        
-        Usage:
+        **Detailed Description:**  
+        This command allows you to **upload a new memory file** for Kite.  
+        The previous memory is **backed up automatically**, but this will replace the current memory.
+
+        **Usage:**  
         `!setmemory` (attach a file) → Uploads and sets Kite's memory.
-        
-        - **Server Mode Only**: Requires the "Vetted" and "Kite flyer" roles.
-        
-        Arguments:
-        - **File Attachment**: The new memory file to be used.
+
+        **Requirements:**  
+        - **Server Mode Only**: This command only works in the **#kite** channel.  
+        - **Roles Required**: "Vetted" and "Kite flyer".  
+
+        **Arguments:**  
+        - **File Attachment**: The new memory file to be stored.
         """
 
         if not ctx.message.attachments:
@@ -57,4 +63,5 @@ class SetMemory(commands.Cog):
         await ctx.send("✅ Memory successfully updated.")
 
 async def setup(bot):
+    """Registers this command with the bot."""
     await bot.add_cog(SetMemory(bot))
