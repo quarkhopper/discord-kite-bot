@@ -1,10 +1,14 @@
-# modules/kitestrings.py
+# kitestrings.py
+import pathlib
 
-def ping():
-    return "Pong!"
+DATA_DIR = pathlib.Path("data")
+DATA_DIR.mkdir(exist_ok=True)
 
-def add_numbers(a: int, b: int) -> int:
-    return a + b
+KITE_MEMORY_PATH = DATA_DIR / "kite_memory.txt"
 
-def echo(message: str) -> str:
-    return f"Kite echoes: {message}"
+def process_and_save_attachment(file_bytes: bytes):
+    # TODO: Add processing logic here (currently empty)
+    processed_text = file_bytes.decode("utf-8")
+
+    with open(KITE_MEMORY_PATH, "w", encoding="utf-8") as f:
+        f.write(processed_text)
