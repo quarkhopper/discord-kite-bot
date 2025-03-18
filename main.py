@@ -1,54 +1,47 @@
 import asyncio
 import discord
-import openai
 import os
+import logging
 from discord.ext import commands
 from dotenv import load_dotenv
-import pathlib
-import logging  # Added logging
+from pathlib import Path
 
 # Load environment variables
 load_dotenv()
-
-# Initialize OpenAI client
-openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("discord")
 
-# Discord bot setup
+# Discord bot setup with required intents
 intents = discord.Intents.default()
-intents.message_content = True  # Allows access to message content
+intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Log when bot is ready
+# Recursive function to load all commands (cogs) from the commands directory
+async def load_cogs():
+    commands_dir = Path(__file__).parent / "commands"
+    for cog_file in commands_dir.rglob("*.py"):
+        if cog_file.name == "__init__.py":
+            continue  # Skip __init__.py files
+
+        # Convert file path to Python module path (e.g., commands.test_commands.test)
+        module_path = ".".join(cog_file.relative_to(commands_dir.parent).with_suffix('').parts)
+        try:
+            await bot.load_extension(module_path)
+            logger.info(f"✅ Loaded cog: {module_path}")
+        except Exception as e:
+            logger.error(f"❌ Failed to load cog {module_path}: {e}")
+
 @bot.event
 async def on_ready():
     logger.info(f"✅ Logged in as {bot.user}")
-    
-    # Debug: List all registered commands
-    command_list = [cmd.name for cmd in bot.commands]
-    logger.info(f"🛠 Registered commands: {command_list}")
+    logger.info(f"🛠 Registered commands: {[cmd.name for cmd in bot.commands]}")
 
-# Load all Cogs from the 'commands' directory
-async def load_cogs():
-    commands_dir = pathlib.Path("commands")
-    if commands_dir.exists():
-        for command_file in commands_dir.glob("*.py"):
-            if command_file.stem != "__init__":  # Avoid loading __init__.py
-                module_name = f"commands.{command_file.stem}"
-                try:
-                    await bot.load_extension(module_name)
-                    logger.info(f"✅ Loaded cog: {module_name}")
-                except Exception as e:
-                    logger.error(f"❌ Failed to load {module_name}: {e}")
-
-# Start the bot
-async def run_bot():
-    logger.info("🚀 Starting Discord bot...")
-    await load_cogs()  # ✅ Load cogs before starting
+# Main entry point
+async def main():
+    await load_cogs()  # Load all cogs recursively
     await bot.start(os.getenv("DISCORD_BOT_TOKEN"))
 
 if __name__ == "__main__":
-    asyncio.run(run_bot())
+    asyncio.run(main())
