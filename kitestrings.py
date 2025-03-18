@@ -13,8 +13,8 @@ def process_into_memory(file_bytes: bytes) -> str:
     return file_bytes.decode("utf-8")
 
 def set_memory(file_bytes: bytes):
-    # Backup current memory before overwriting
-    if KITE_MEMORY_PATH.exists():
+    # Backup current memory only if it exists and has content
+    if KITE_MEMORY_PATH.exists() and KITE_MEMORY_PATH.stat().st_size > 0:
         shutil.copy(KITE_MEMORY_PATH, KITE_MEMORY_BACKUP_PATH)
 
     processed_content = process_into_memory(file_bytes)
