@@ -20,7 +20,6 @@ discord-askme-bot/
 │   ├── guidelines.md
 ```
 
-
 ## Main Components
 - `main.py`: Handles bot initialization, event listening, and command registration.
 - `config_manager.py`: Manages dynamic command configurations, including channel whitelists.
