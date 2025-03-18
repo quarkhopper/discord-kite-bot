@@ -3,6 +3,7 @@ from discord.ext import commands
 import discord
 import kitestrings
 from config_manager import check_command_channel, has_required_roles
+import os
 
 class GetMemory(commands.Cog):
     def __init__(self, bot):
@@ -15,10 +16,12 @@ class GetMemory(commands.Cog):
         """Usage: !getmemory
         
         Retrieves the current Kite memory file for download.
+        If no memory file exists, informs the user instead of sending NaN.
         """
 
         memory_path = kitestrings.export_memory()
-        if not memory_path.exists():
+        
+        if not os.path.exists(memory_path):
             await ctx.send("🚫 No memory file found.")
             return
         
