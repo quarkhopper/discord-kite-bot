@@ -1,13 +1,23 @@
 # commands/setmemory.py
 from discord.ext import commands
+import asyncio  
 import kitestrings
+from config_manager import check_command_channel, has_required_roles
 
 class SetMemory(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.command()
+    @commands.check(check_command_channel)  # Enforce channel restriction globally
+    @has_required_roles(sensitive=True)  # Dynamically enforce "Vetted" + "Kite flyer"
     async def setmemory(self, ctx):
+        """Usage: !setmemory (with file attached)
+
+        Overwrites Kite's current memory with the content of the uploaded file.
+        Requires confirmation before overwriting.
+        """
+
         if not ctx.message.attachments:
             await ctx.send("Usage: `!setmemory` (with file attached)")
             return

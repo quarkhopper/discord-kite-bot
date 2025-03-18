@@ -1,32 +1,28 @@
-import discord
 from discord.ext import commands
 
-class BotErrors(commands.Cog):  # ✅ Inherit from commands.Cog
+class BotErrors(commands.Cog):
     """Handles centralized error checks and messages for the bot."""
 
     def __init__(self, bot):
-        self.bot = bot  # ✅ Save the bot reference
-        super().__init__()  # ✅ Ensure proper Cog initialization
+        self.bot = bot
 
-    @staticmethod
-    def require_role(role_name: str):
-        async def predicate(ctx):
-            if ctx.guild is None:  # DM Mode: Skip role checks
-                return True
-            if discord.utils.get(ctx.author.roles, name=role_name):
-                return True
-            await ctx.send(f"You must have the `{role_name}` role to use this command.")
-            return False
-        return commands.check(predicate)
+    async def handle_error(self, ctx, error):
+        """Handles errors globally and ensures messages are sent in #kite."""
+        config = self.bot.get_cog("ConfigManager")
+        if not config:
+            await ctx.send("❌ An error occurred, and configuration couldn't be loaded.")
+            return
 
-    @staticmethod
-    async def handle_error(ctx, error):
-        """Handles errors globally and ensures messages are sent via DM first."""
-        try:
-            dm_channel = await ctx.author.create_dm()
-            await dm_channel.send(f"❌ An error occurred while executing the command: {ctx.command}\nError: {error}")
-        except discord.Forbidden:
-            await ctx.send("❌ An error occurred while executing the command, and I couldn't send you a DM.")
+        kite_channel_name = config.get_channel_name()
+
+        # Find the #kite channel
+        for channel in ctx.guild.text_channels:
+            if channel.name == kite_channel_name:
+                await channel.send(f"❌ An error occurred while executing `{ctx.command}`:\n```\n{error}\n```")
+                return
+
+        # Fallback if #kite channel is not found
+        await ctx.send(f"❌ Error occurred: `{error}` (could not locate #{kite_channel_name})")
 
 # ✅ Properly register the Cog with the bot
 async def setup(bot):

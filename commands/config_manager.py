@@ -8,11 +8,17 @@ class ConfigManager(commands.Cog):
         self.bot = bot
         self.config_channel_id = None  # Will be set dynamically
         self.command_config = {}  # In-memory config storage
+        self.kite_channel = "kite"  # Default value if not found in JSON
+
+        # Centralized role settings
+        self.GENERAL_REQUIRED_ROLE = "Vetted"
+        self.SENSITIVE_REQUIRED_ROLE = "Kite flyer"
 
     @commands.Cog.listener()
     async def on_ready(self):
         """Finds #bot-config dynamically and prepares for polling on demand."""
         await self.find_config_channel()
+        await self.fetch_latest_config()
 
     async def find_config_channel(self):
         """Searches for #bot-config across all guilds."""
@@ -45,11 +51,8 @@ class ConfigManager(commands.Cog):
                 content = content[7:-3].strip()  # Remove ```json (7 chars) and ``` (3 chars)
             elif content.startswith("```") and content.endswith("```"):
                 content = content[3:-3].strip()  # Remove ``` and ```
-                
+
             print(f"[ConfigManager] Processed JSON content:\n{repr(content)}")  # Debugging log
-            
-            # DEBUGGING: Log the raw message content
-            print(f"[ConfigManager] Raw message content: {repr(content)}")
 
             if not content:
                 print("[ConfigManager] Retrieved an empty message from #bot-config.")
@@ -58,64 +61,61 @@ class ConfigManager(commands.Cog):
             try:
                 new_config = json.loads(content)  # Try parsing first
                 self.command_config = new_config  # Replace existing config
-                print("[ConfigManager] Configuration updated successfully.")
-                
-                # 🔍 DEBUG: Check if "guide" is found in the parsed JSON
-                if "guide" in new_config:
-                    print("[ConfigManager] 'guide' section found in JSON!")
-                else:
-                    print("[ConfigManager] WARNING: 'guide' section NOT found in JSON!")
+
+                # Extract kite-channel from kite-config if available
+                kite_config = new_config.get("kite-config", {})
+                self.kite_channel = kite_config.get("kite-channel", "kite")
+                print(f"[ConfigManager] Kite commands restricted to #{self.kite_channel}")
 
             except json.JSONDecodeError:
-                print("[ConfigManager] Invalid JSON detected. Attempting to correct format...")
+                print("[ConfigManager] Invalid JSON detected. Skipping config update.")
 
-                # Attempt to fix JSON formatting
-                fixed_content = self.fix_json_format(content)
-                if fixed_content:
-                    try:
-                        corrected_config = json.loads(fixed_content)  # Verify corrected JSON
-                        self.command_config = corrected_config  # Apply the corrected config
-                        print("[ConfigManager] JSON format corrected and configuration updated.")
+    def get_channel_name(self):
+        """Returns the authorized channel name for Kite commands."""
+        return self.kite_channel  # Dynamically set from config
 
-                        # Edit the original message to update with fixed JSON
-                        await message.edit(content=f"```json\n{fixed_content}\n```")
-                        print("[ConfigManager] Updated #bot-config with corrected JSON.")
+    def get_general_role(self):
+        """Returns the required role for all commands."""
+        return self.GENERAL_REQUIRED_ROLE
 
-                    except json.JSONDecodeError:
-                        print("[ConfigManager] Automatic correction failed. Manual review needed.")
-                else:
-                    print("[ConfigManager] Could not generate a corrected JSON format.")
-
-    def fix_json_format(self, raw_json):
-        """Attempts to fix common JSON formatting issues."""
-        try:
-            # Remove non-printable characters (invisible Discord artifacts)
-            raw_json = re.sub(r'[^\x20-\x7E\n\t]', '', raw_json)
-
-            # Fix smart quotes and apostrophes
-            raw_json = raw_json.replace("“", "\"").replace("”", "\"")
-            raw_json = raw_json.replace("’", "'").replace("‘", "'")
-
-            # Attempt parsing again
-            parsed_json = json.loads(raw_json)
-        except json.JSONDecodeError:
-            return None  # If still broken, return failure
+    def get_sensitive_role(self):
+        """Returns the additional role required for sensitive commands."""
+        return self.SENSITIVE_REQUIRED_ROLE
+    
+    def has_required_roles(self, sensitive=False):
+        """Dynamically checks if the user has the required roles.
         
-        return json.dumps(parsed_json, indent=4)  # Return properly formatted JSON
+        If `sensitive=True`, it also checks for the sensitive role.
+        """
 
-    async def get_command_whitelist(self, command_name):
-        """Retrieves the latest configuration before returning the whitelist for a command."""
-        await self.fetch_latest_config()  # Polls #bot-config for the latest data
-        
-        # 🔍 DEBUG: Log available commands
-        print(f"[ConfigManager] Available commands in config: {list(self.command_config.keys())}")
-        
-        if command_name in self.command_config:
-            print(f"[ConfigManager] Found whitelist for '{command_name}': {self.command_config[command_name].get('processing_whitelist', [])}")
-        else:
-            print(f"[ConfigManager] WARNING: No entry found for command '{command_name}' in config!")
+        async def predicate(ctx):
+            config = ctx.bot.get_cog("ConfigManager")
+            if not config:
+                return False  # Fail-safe if ConfigManager is missing
 
-        return self.command_config.get(command_name, {}).get("processing_whitelist", [])
+            general_role = config.get_general_role()
+            sensitive_role = config.get_sensitive_role()
+
+            # Check for general access role
+            if not any(role.name == general_role for role in ctx.author.roles):
+                return False
+
+            # If the command requires the sensitive role, check for it
+            if sensitive and not any(role.name == sensitive_role for role in ctx.author.roles):
+                return False
+
+            return True
+
+        return commands.check(predicate)
+
+def check_command_channel(ctx):
+    """Ensures that the command is executed only in the authorized channel."""
+    config = ctx.bot.get_cog("ConfigManager")
+    if not config:
+        return False  # ConfigManager is missing, fail safe
+
+    authorized_channel = config.get_channel_name()
+    return ctx.channel.name == authorized_channel
 
 async def setup(bot):
     await bot.add_cog(ConfigManager(bot))
