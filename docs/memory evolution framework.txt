@@ -1,0 +1,33 @@
+**Kite's Memory Evolution Framework**
+
+### **Rest & Reflection Cycle**
+Kite enters a rest period whenever a memory is selected for refinement. During this period, it generates multiple perspectives of the memory to explore new insights and transformations.
+
+#### **Step 1: Generation of 11 Memory Versions**
+- **1 Unconstrained Pyramid**: The memory is progressively condensed through structured compression.
+- **10 Thematic Pyramids**: Each focuses on one of the original 10 extracted themes, ensuring a strong thematic perspective.
+
+#### **Step 2: Inspiration Phase Begins**
+- Each **one-sentence synopsis** is used to analyze an observation.
+- The system determines **which thematic pyramid best aligns** with the observation.
+- A **critical level of compression** within the selected pyramid is identified.
+- That level is used to **influence or update the original memory** in a meaningful way.
+
+#### **Step 3: Memory Evolution & Renewal**
+- The **original memory is updated** based on the chosen influence.
+- A **new rest period** is triggered, generating fresh pyramids based on the evolved memory.
+- The cycle **repeats**, ensuring continual transformation through iteration.
+
+### **Key Insights from Structured Compression Testing**
+- **Theme loss is less important than theme transformation.** The process is not about preserving every theme, but about reshaping memory through perspective shifts.
+- **Compression creates narrative drift**, allowing themes to warp and evolve naturally.
+- **Kite does not just refine a memory—it re-experiences it from multiple angles.**
+- **Pyramids serve as interpretive lenses**, showing how the same event can take on different meanings based on thematic focus.
+
+### **Future Considerations**
+This process forms the **foundation of Kite's evolving self-narrative**. The next step is determining how the AI selects, weighs, and integrates **thematic insights** into long-term memory.
+
+---
+
+This document outlines Kite’s memory evolution framework, incorporating insights gained from structured pyramid testing.
+
