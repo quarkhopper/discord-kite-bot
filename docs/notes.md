@@ -45,19 +45,47 @@ Kite AI: Thought & Artistic Process Guidelines
 - If the painting fails to produce meaning, Kite abandons it.
 - Abandoned works do not persist unless a later rule introduces re-examination.
 
-## 3. Fable Generation & Memory Formation
+## 3. Pyramidal Memory & Thematic Summarization
 
-### 3.1 When Fables Are Generated
+### 3.1 Thematic Memory Structures
+- Memory is not stored in discrete "chunks" but as **pyramidal summaries**.
+- Each pyramid represents a core **theme** (e.g., **Struggle, Growth, Exploration**).
+- The **base layer** contains the full memory, while higher levels form **progressively reduced summaries**.
+- This allows memory to unfold fluidly in response to observations rather than being retrieved by rigid search.
+
+### 3.2 Dynamic Pyramidal Adaptation
+- Pyramids **shift in weight over time**, emphasizing themes relevant to Kite’s current concerns.
+- If a theme is no longer relevant, its pyramid may **decay** and be replaced by new emerging ones.
+- **New pyramids form when multiple inferences reinforce a growing pattern of thought.**
+
+### 3.3 Memory Unfolding & Inference Formation
+- Observations do not directly “search” for related memories.
+- Instead, they **disturb the pyramids**, causing relevant layers to rise in prominence.
+- Higher-level summaries guide inference formation, allowing broad, emergent associations to form naturally.
+
+### 3.4 Refinement Process: Finding the Right Depth
+- **Broad summaries are easily applicable**, but as we move down, applicability narrows.
+- **Inferences test progressively lower summary levels** until one applies more to a single part than the whole.
+- **Once an inference disproportionately applies to part of a summary**, it has **landed** and must now target the base memory.
+
+### 3.5 The Role of the Fabulist
+- The inference **is not a direct insertion** into memory.
+- Instead, the **fabulist crafts new fables** to refine the targeted base memory location.
+- **The inference serves as a guide**, but the fabulist expands it into **concrete details and events**.
+
+## 4. Fable Generation & Memory Formation
+
+### 4.1 When Fables Are Generated
 - A fable is generated only when an inference reaches a threshold of complexity.
 - AI constructs a fable based on the inference, introducing symbolic elements.
 - Example: “Traveling to the mainland is risky.” → AI-generated fable might introduce a storm.
 
-### 3.2 Story Test (AI Reviewer)
+### 4.2 Story Test (AI Reviewer)
 - AI evaluates whether the fable aligns with Kite’s worldview.
 - If accepted, the fable becomes a permanent memory.
 - If rejected, the fable is discarded, but the inference remains.
 
-### 3.3 Contradictions & Crisis Resolution
+### 4.3 Contradictions & Crisis Resolution
 - A contradiction emerges if new information conflicts with existing memory.
 - Kite enters a cognitive dissonance phase and seeks resolution.
 - Possible outcomes:
@@ -65,9 +93,9 @@ Kite AI: Thought & Artistic Process Guidelines
   - If bias favors the old memory, the contradiction remains unresolved.
   - If uncertainty lingers, Kite continues searching for supporting information.
 
-## 4. Inference Decay & Memory Evolution
+## 5. Inference Decay & Memory Evolution
 
-### 4.1 How Inferences Fade or Strengthen
+### 5.1 How Inferences Fade or Strengthen
 - Rejected fables are forgotten, but inferences persist.
 - Inferences decay faster if:
   - They have been tried multiple times and failed.
@@ -75,7 +103,7 @@ Kite AI: Thought & Artistic Process Guidelines
   - They have not been revisited in a long time.
 - Stronger inferences last longer and become central preoccupations.
 
-### 4.2 The Life Cycle of a Thought
+### 5.2 The Life Cycle of a Thought
 - Kite receives inspiration (`!inspire`).
 - A first-level inference is formed.
 - Multiple inferences combine into meso-inferences.
@@ -90,7 +118,8 @@ Kite AI: Thought & Artistic Process Guidelines
 - Build a test framework for inference formation and meso-inference merging.
 - Develop AI prompts for fable generation and story testing.
 - Prototype the artistic trance feedback loop.
-- Create a structured way to track inference decay.
+- Implement pyramidal memory processing for **thematic unfolding** instead of direct memory retrieval.
+- Ensure the fabulist constructs **new fables as refinements**, rather than direct memory overwrites.
 
 *This document serves as a guiding blueprint for turning Kite into an evolving, self-reflective artist driven by thought, inspiration, and contradiction resolution.*
 
